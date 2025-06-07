@@ -1,5 +1,6 @@
 ![Todo List Logo](./public/todolist.png) 
-# Todo List Client App - [![Netlify Status](https://api.netlify.com/api/v1/badges/4f17513e-aa76-4c00-ab9d-b00e222fa24a/deploy-status)](https://todo-list-client.vercel.app)
+# Todo List Client App - [![Vercel](https://img.shields.io/badge/deploy-vercel-black?style=for-the-badge&logo=vercel&logoColor=white)](https://todo-list-client-app.vercel.app)
+
 
 [![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)](https://nextjs.org/docs/app)
 [![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
