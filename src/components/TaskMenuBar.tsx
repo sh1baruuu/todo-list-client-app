@@ -1,7 +1,8 @@
 'use client';
 
-import { clearAll, Todo } from '@/store/todoSlice';
+import { clearAll } from '@/store/todoSlice';
 import { Plus } from 'lucide-react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import NewTaskModal from './NewTaskModal';
@@ -14,7 +15,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from './ui/select';
-import { useSearchParams, useRouter } from 'next/navigation';
 
 export enum TaskFilter {
     All = 'all',

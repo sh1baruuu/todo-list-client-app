@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { TaskFilter } from "./TaskMenuBar";
 
 interface Props {
