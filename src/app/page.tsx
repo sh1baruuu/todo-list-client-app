@@ -1,103 +1,98 @@
-import Image from "next/image";
+'use client';
+
+import EditTaskModal from '@/components/EditTaskModal';
+import EmptyTasks from '@/components/EmptyTaskIndicator';
+import TaskList from '@/components/TaskList';
+import TaskMenuBar, { TaskFilter } from '@/components/TaskMenuBar';
+import TaskViewModal from '@/components/TaskViewModal';
+import { RootState } from '@/store/store';
+import { Todo } from '@/store/todoSlice';
+import { useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    const search = useSearchParams().get('s');
+    const [filter, setFilter] = useState<TaskFilter>(TaskFilter.All);
+    const [hasMounted, setHasMounted] = useState<boolean>(false);
+    const todos = useSelector((state: RootState) => state.todo.todos);
+    const [showedTodo, setShowedTodo] = useState<Todo[]>([]);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    // View Modal States
+    const [viewModalIsOpen, setViewModalIsOpen] = useState<boolean>(false);
+    const [viewTodoId, setViewTodoId] = useState<number | null>(null);
+
+    //Edit Modal States
+    const [ediModalIsOpen, setEditModalIsOpen] = useState<boolean>(false);
+    const [ediTodoId, setEditTodoId] = useState<number | null>(null);
+
+    // Update showedTodo based on the current filter
+    useEffect(() => {
+        if (!Array.isArray(todos)) return;
+
+        let filteredTodos = [...todos];
+
+        if (filter === TaskFilter.Completed) {
+            filteredTodos = filteredTodos.filter((todo) => todo.completed);
+        } else if (filter === TaskFilter.Pending) {
+            filteredTodos = filteredTodos.filter((todo) => !todo.completed);
+        }
+
+        if (search) {
+            const keyword = search.toLowerCase();
+            filteredTodos = filteredTodos.filter(
+                (todo) =>
+                    todo.task.toLowerCase().includes(keyword) ||
+                    todo.taskTitle.toLowerCase().includes(keyword)
+            );
+        }
+
+        setShowedTodo(filteredTodos);
+    }, [todos, filter, search]);
+
+    useEffect(() => {
+        setFilter(TaskFilter.All);
+    }, [todos]);
+
+    // Ensure the component has mounted before rendering
+    useEffect(() => {
+        setHasMounted(true);
+    }, []);
+
+    if (!hasMounted) return null;
+
+    return (
+        <div className="pt-12">
+            <div className="flex flex-col justify-between max-w-screen-xl h-fit mx-auto px-4">
+                <TaskMenuBar
+                    filter={filter}
+                    all={() => setFilter(TaskFilter.All)}
+                    pending={() => setFilter(TaskFilter.Pending)}
+                    completed={() => setFilter(TaskFilter.Completed)}
+                />
+                <TaskList
+                    todos={showedTodo}
+                    setEditModalIsOpen={setEditModalIsOpen}
+                    setViewModalIsOpen={setViewModalIsOpen}
+                    setEditTodoId={setEditTodoId}
+                    setViewTodoId={setViewTodoId}
+                />
+
+                <EmptyTasks
+                    show={showedTodo.length === 0}
+                    filter={filter}
+                />
+                <TaskViewModal
+                    id={viewTodoId}
+                    isOpen={viewModalIsOpen}
+                    onClose={() => setViewModalIsOpen(false)}
+                />
+                <EditTaskModal
+                    id={ediTodoId}
+                    isOpen={ediModalIsOpen}
+                    onClose={() => setEditModalIsOpen(false)}
+                />
+            </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+    );
 }
