@@ -6,12 +6,14 @@ import TaskList from '@/components/TaskList';
 import TaskMenuBar, { TaskFilter } from '@/components/TaskMenuBar';
 import TaskViewModal from '@/components/TaskViewModal';
 import { RootState } from '@/store/store';
-import { Todo } from '@/store/todoSlice';
+import { hydrateFromLocalStorage, Todo } from '@/store/todoSlice';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 export default function Home() {
+    const dispatch = useDispatch();
+    // Get search params from the URL
     const search = useSearchParams().get('s');
     const [filter, setFilter] = useState<TaskFilter>(TaskFilter.All);
     const [hasMounted, setHasMounted] = useState<boolean>(false);
@@ -25,6 +27,17 @@ export default function Home() {
     //Edit Modal States
     const [ediModalIsOpen, setEditModalIsOpen] = useState<boolean>(false);
     const [ediTodoId, setEditTodoId] = useState<number | null>(null);
+
+    useEffect(() => {
+        try {
+            const data = localStorage.getItem('todos');
+            if (data) {
+                dispatch(hydrateFromLocalStorage(JSON.parse(data)));
+            }
+        } catch (error) {
+            console.error('Failed to load todos from localStorage:', error);
+        }
+    }, [dispatch]);
 
     // Update showedTodo based on the current filter
     useEffect(() => {

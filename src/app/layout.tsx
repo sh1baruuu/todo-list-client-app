@@ -1,6 +1,8 @@
+import Loader from '@/components/Loader';
 import AppContextProvider from '@/context/AppContext';
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono, Fugaz_One } from 'next/font/google';
+import { Fugaz_One, Geist, Geist_Mono } from 'next/font/google';
+import { Suspense } from 'react';
 import './globals.css';
 const geistSans = Geist({
     variable: '--font-geist-sans',
@@ -36,13 +38,14 @@ export default function RootLayout({
                 <AppContextProvider>
                     <div className="border-b">
                         <div className="flex items-center justify-center lg:justify-start max-w-screen-xl mx-auto py-4 px-6 lg:px-0">
-                            <h1 className="text-xl lg:text-2xl  font-bold font-[family-name:var(--font-fugaz-one)]">TODOLIST</h1>
+                            <h1 className="text-xl lg:text-2xl  font-bold font-[family-name:var(--font-fugaz-one)]">
+                                TODOLIST
+                            </h1>
                         </div>
                     </div>
-                    {children}
+                    <Suspense fallback={<Loader />}>{children}</Suspense>
                 </AppContextProvider>
             </body>
         </html>
     );
 }
-

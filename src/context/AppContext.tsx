@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import React from 'react'; 
 import { store } from '@/store/store';
+import React from 'react';
 import { Provider } from 'react-redux';
 
 function AppContextProvider({

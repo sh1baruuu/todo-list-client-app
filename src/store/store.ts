@@ -11,7 +11,7 @@ store.subscribe(() => {
     try {
         // Save the current state to localStorage
         const state = store.getState();
-        localStorage.setItem('todos', JSON.stringify(state.todo));
+        localStorage.setItem('todos', JSON.stringify(state.todo.todos));
     } catch (error) {
         console.error('Failed to save state to localStorage:', error);
     }

@@ -7,22 +7,11 @@ export interface Todo {
     completed: boolean;
 }
 
-interface TodoState {
+export interface TodoState {
     todos: Todo[];
 }
 
-// Load todos from localStorage, or return an empty array if not found
-const loadTodosFromLocalStorage = (): TodoState => {
-    try {
-        const data = localStorage.getItem('todos');
-        return data ? JSON.parse(data) : { todos: [] };
-    } catch (error) {
-        console.error('Failed to load todos from localStorage:', error);
-        return { todos: [] };
-    }
-};
-
-const initialState: TodoState = loadTodosFromLocalStorage();
+const initialState: TodoState = { todos: [] };
 
 const todoSlice = createSlice({
     name: 'todo',
